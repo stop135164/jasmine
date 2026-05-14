@@ -7,8 +7,34 @@ import 'package:jasmine/screens/init_screen.dart';
 import 'components/right_click_pop.dart';
 import 'downloads_screen.dart';
 
-class NetworkSettingScreen extends StatelessWidget {
+class NetworkSettingScreen extends StatefulWidget {
   const NetworkSettingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NetworkSettingScreen> createState() => _NetworkSettingScreenState();
+}
+
+class _NetworkSettingScreenState extends State<NetworkSettingScreen> {
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      await initApiHost();
+      await initCdnHost();
+      await initProxy();
+    } catch (_) {}
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +68,15 @@ class NetworkSettingScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          apiHostSetting(),
-          cdnHostSetting(),
-          proxySetting(),
-        ],
-      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              children: [
+                apiHostSetting(),
+                cdnHostSetting(),
+                proxySetting(),
+              ],
+            ),
     );
   }
 }
