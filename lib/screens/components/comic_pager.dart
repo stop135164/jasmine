@@ -19,11 +19,13 @@ class ComicPager extends StatefulWidget {
   final Future<InnerComicPage> Function(int page) onPage;
   final List<ComicLongPressMenuItem>? longPressMenuItems;
   final List<Widget>? appendList;
+  final bool ignoreProLimit;
 
   const ComicPager(
       {required this.onPage,
       this.longPressMenuItems,
       this.appendList,
+      this.ignoreProLimit = false,
       Key? key})
       : super(key: key);
 
@@ -55,12 +57,14 @@ class _ComicPagerState extends State<ComicPager> {
         return _StreamPager(
             onPage: widget.onPage,
             longPressMenuItems: widget.longPressMenuItems,
-            appendList: widget.appendList);
+            appendList: widget.appendList,
+            ignoreProLimit: widget.ignoreProLimit);
       case PagerControllerMode.pager:
         return _PagerPager(
             onPage: widget.onPage,
             longPressMenuItems: widget.longPressMenuItems,
-            appendList: widget.appendList);
+            appendList: widget.appendList,
+            ignoreProLimit: widget.ignoreProLimit);
     }
   }
 }
@@ -69,12 +73,14 @@ class _StreamPager extends StatefulWidget {
   final Future<InnerComicPage> Function(int page) onPage;
   final List<ComicLongPressMenuItem>? longPressMenuItems;
   final List<Widget>? appendList;
+  final bool ignoreProLimit;
 
   const _StreamPager(
       {Key? key,
       required this.onPage,
       this.longPressMenuItems,
-      this.appendList})
+      this.appendList,
+      this.ignoreProLimit = false})
       : super(key: key);
 
   @override
@@ -86,7 +92,7 @@ class _StreamPagerState extends State<_StreamPager> {
   int _nextPage = 1;
   int _total = 0;
 
-  bool get _noPro => !isPro && _nextPage > _noProMax;
+  bool get _noPro => !widget.ignoreProLimit && !isPro && _nextPage > _noProMax;
 
   var _joining = false;
   var _joinSuccess = true;
@@ -131,7 +137,7 @@ class _StreamPagerState extends State<_StreamPager> {
     if (_total == 0) {
       return;
     }
-    if (!isPro) {
+    if (!widget.ignoreProLimit && !isPro) {
       defaultToast(context, "发电才能跳页哦~");
       return;
     }
@@ -326,12 +332,14 @@ class _PagerPager extends StatefulWidget {
   final Future<InnerComicPage> Function(int page) onPage;
   final List<ComicLongPressMenuItem>? longPressMenuItems;
   final List<Widget>? appendList;
+  final bool ignoreProLimit;
 
   const _PagerPager(
       {Key? key,
       required this.onPage,
       this.longPressMenuItems,
-      this.appendList})
+      this.appendList,
+      this.ignoreProLimit = false})
       : super(key: key);
 
   @override
@@ -421,7 +429,7 @@ class _PagerPagerState extends State<_PagerPager> {
             children: [
               InkWell(
                 onTap: () {
-                  if (!isPro) {
+                  if (!widget.ignoreProLimit && !isPro) {
                     defaultToast(context, "发电才能跳页哦~");
                     return;
                   }
