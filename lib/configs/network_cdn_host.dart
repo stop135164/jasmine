@@ -23,10 +23,14 @@ const _base64List = [
 var _cdnList = [];
 
 Future<void> initCdnHost() async {
+  _cdnList = [];
   for (var i = 0; i < _base64List.length; i++) {
     _cdnList.add(utf8.decode(base64.decode(_base64List[i])));
   }
   _cdnHost = await methods.loadCdnHost();
+  if (_cdnHost == "" && _cdnList.isNotEmpty) {
+    _cdnHost = _cdnList.first;
+  }
 }
 
 Future chooseCdnHost(BuildContext context) async {

@@ -15,10 +15,14 @@ const _base64List = [
 var _apiList = [];
 
 Future<void> initApiHost() async {
+  _apiList = [];
   for (var i = 0; i < _base64List.length; i++) {
     _apiList.add(utf8.decode(base64.decode(_base64List[i])));
   }
   _apiHost = await methods.loadApiHost();
+  if (_apiHost == "" && _apiList.isNotEmpty) {
+    _apiHost = _apiList.first;
+  }
 }
 
 String get currentApiHostName => (_apiHost);
