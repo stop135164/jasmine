@@ -126,6 +126,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ? const Center(child: CircularProgressIndicator())
           : ComicPager(
               key: Key("FAVOUR:$_folderId:$_sort"),
+              ignoreProLimit: true,
               onPage: (int page) async {
                 final response =
                     await methods.favorites(_folderId, page, _sort);
